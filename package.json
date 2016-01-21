@@ -1,0 +1,18 @@
+{
+  "name": "react-native-webview-rpc",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "description": "An JSON RPC between ReactNative and WebView",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+  "scripts": {
+    "build": "quickpack build  index.js -p --no-uglify -o lib"
+  },
+
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
