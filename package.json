@@ -12,6 +12,8 @@
     "build": "quickpack build  index.js -p --no-uglify -o lib"
   },
 
+  "repository": "hayeah/react-native-webview-rpc",
+
   "keywords": [],
   "author": "",
   "license": "ISC"
