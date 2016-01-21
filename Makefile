@@ -1,4 +1,4 @@
-PACK = quickpack build  index.js -p --no-uglify -o lib
+PACK = quickpack build index.js rpc.js -p --no-uglify -o lib
 
 .PHONY: build
 build:

@@ -40,9 +40,30 @@ ReactNative JavaScript:
     }).catch(err => {
 
     });
-*/
 
-import ReactNativeWebView from "./bridge.js";
+    // In ReactNative
+
+    componentDidMount() {
+      this.rpc = new WebViewRPC($webview);
+
+      client.call("plus",[2,3]).then(result => {
+        console.log(result);
+        // => 5
+      });
+    }
+
+    // In WebView
+
+    this.rpc = new WebViewRPC(ReactNativeWebView,{
+      plus(a,b) {
+        return a+b;
+      },
+
+      multiply(c,d) {
+        return c*d;
+      },
+    });
+*/
 
 const WebViewRPCMessageType = {
   // @param payload {type, nonce, result, error}
@@ -52,10 +73,10 @@ const WebViewRPCMessageType = {
   WebViewRPCRequest: "WebViewRPCRequest",
 }
 
-class WebViewRPC {
-  constructor(obj,handler) {
+class ReactNativeWebViewRPC {
+  constructor(obj,handler=undefined) {
     this._send = obj.send.bind(obj);
-    this._onReceive = obj.onReceive.bind(obj);
+    // this._onReceive = obj.onReceive.bind(obj);
 
     this._nonce = 0;
 
@@ -68,6 +89,15 @@ class WebViewRPC {
   // @param payload {type, nonce, method, args}
   _handleRequest(payload) {
     const {nonce,method,args} = payload;
+
+    if(this._handler == null) {
+      // TODO should return error?
+      return {
+        nonce,
+        result: null,
+        error: `RPC service not available`
+      }
+    }
 
     let fn = this._handler[method];
     if(fn == null) {
@@ -88,6 +118,7 @@ class WebViewRPC {
     }
 
     return {
+      type: WebViewRPCMessageType.WebViewRPCResponse,
       nonce,
       result,
       error,
@@ -119,6 +150,7 @@ class WebViewRPC {
       this._callRejecters[nonce] = reject;
 
       this._send({
+        type: WebViewRPCMessageType.WebViewRPCRequest,
         nonce,
         method,
         args,
@@ -136,10 +168,10 @@ class WebViewRPC {
     }
 
     if(payload.type === WebViewRPCMessageType.WebViewRPCResponse) {
-      _handleResponse(payload);
+      this._handleResponse(payload);
       return;
     }
   }
 }
 
-export default WebViewRPC;
+export default ReactNativeWebViewRPC;
